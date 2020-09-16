@@ -1,0 +1,9 @@
+# Don't track content from these folders
+data_input/
+data_output/
+
+# Compiled source
+*.201
+*.pos
+*.csv
+
