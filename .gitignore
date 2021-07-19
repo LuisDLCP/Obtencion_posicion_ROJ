@@ -1,6 +1,6 @@
 # Don't track content from these folders
-data_input/
-data_output/
+Input_files/
+Output_files/
 
 # Compiled source
 *.201
