@@ -157,7 +157,7 @@ def save_csv(input_file_name, variable):
     return "Ok!"
 
 def main():
-    list_input_files = glob.glob(input_files_path+'*.201') # List all the files of the input directory
+    list_input_files = glob.glob(input_files_path+'*1') # List all NMEA files 
     if len(list_input_files)>0:
         for file_i in list_input_files:
             file_name = file_i[len(input_files_path):] # Get the file's name
