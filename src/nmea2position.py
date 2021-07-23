@@ -1,13 +1,14 @@
-#!/home/luis/anaconda3/bin/python3
+#!/usr/bin/python3.6
 import pandas as pd
 import datetime
 import glob
 import os 
 
-current_path = "/home/luis/Desktop/Proyects_Files/LISN/GPSs/Tareas/Obtencion_posicion/"
-input_files_path = current_path + "data_input/data_set/"
-input_files_path_op = current_path + "data_input/data_procesada/"
-output_files_path = current_path + "data_output/"
+current_path = "/home/cesar/Desktop/luisd/scripts/Obtencion_posicion/"
+input_files_path = current_path + "Input_files/Data_set/"
+input_files_path_op = current_path + "Input_files/Data_procesada/"
+output_files_path = current_path + "Output_files/"
+output_files_path2 = output_files_path + "ToUpload/"
 
 # Input file: nmea type GGA & ZDA file. 
 def read_nmea(input_file_name):
@@ -130,7 +131,12 @@ def nmea2lisn(data):
 
 def save_csv(input_file_name, variable):
     output_file_name = input_file_name[:-4]+".pos"
-    variable.to_csv(output_files_path + output_file_name, sep='\t', index=False, header=False, encoding="utf-8")
+    csv_path = output_files_path + output_file_name
+    csv_path2 = output_files_path2 + output_file_name
+    # Save to a permanent output folder 
+    variable.to_csv(csv_path, sep='\t', index=False, header=False, encoding="utf-8")
+    # Save to a temporal output folder 
+    variable.to_csv(csv_path2, sep='\t', index=False, header=False, encoding="utf-8")
     
     return "Ok!"
 
@@ -146,6 +152,7 @@ def main():
     
             # Move input files to a permanent directory
             os.rename(file_i, input_files_path_op+file_name)
+
 
 if __name__ == '__main__':
     print("Starting ...")
