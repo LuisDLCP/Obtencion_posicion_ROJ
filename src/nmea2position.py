@@ -129,8 +129,24 @@ def nmea2lisn(data):
 
     return df
 
+# Generate file name in the LISN format 
+def get_file_name(file_name):
+    station_name = file_name[:4]
+    doy = file_name[4:7]
+    yy = file_name[9:11]
+    today = yy + "-" + doy + ";00:00:00" # e.g. '20-219;00:00:00'
+    fecha = datetime.datetime.strptime(today,"%y-%j;%H:%M:%S")
+    fecha = datetime.datetime.strftime(fecha,"%y-%m-%d") #e.g. '20-08-06'
+    year = fecha[:2]
+    month = fecha[3:5]
+    day = fecha[6:8]
+
+    file_name = station_name + "_" + year + month + day + ".pos"
+
+    return file_name
+
 def save_csv(input_file_name, variable):
-    output_file_name = input_file_name[:-4]+".pos"
+    output_file_name = get_file_name(input_file_name)
     csv_path = output_files_path + output_file_name
     csv_path2 = output_files_path2 + output_file_name
     # Save to a permanent output folder 
