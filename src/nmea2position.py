@@ -1,8 +1,11 @@
 #!/usr/bin/python3.6
 import pandas as pd
 import datetime
+import warnings
 import glob
 import os 
+
+warnings.filterwarnings("ignore")
 
 current_path = "/home/cesar/Desktop/luisd/scripts/Obtencion_posicion/"
 input_files_path = current_path + "Input_files/Data_set/"
@@ -122,10 +125,19 @@ def nmea2lisn(data):
     df["SoD"] = df.loc[:,"UTC_time"].astype('int').astype('str').str.zfill(6).apply(get_secondsDay)
     del df["UTC_time"] 
 
-    # --Finally, we arrange the columns
+    # --Next, we arrange the columns
     df["Var"] = 0
     df = df[["Var","Year","DoY","SoD","LAT","LON","HEIGHT"]]
     df.drop_duplicates(subset="SoD", keep="last", inplace=True)
+
+    # --Decimate every hour 
+    df = df.iloc[8::60, :]
+    df.reset_index(drop=True, inplace=True)
+
+    # --Finally, convert to 7 digits float number 
+    df["LAT"] = df["LAT"].apply('{:,.7f}'.format)
+    df["LON"] = df["LON"].apply('{:,.7f}'.format)
+    df["HEIGHT"] = df["HEIGHT"].apply('{:,.7f}'.format)
 
     return df
 
