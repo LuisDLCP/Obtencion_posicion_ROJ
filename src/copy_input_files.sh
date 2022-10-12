@@ -4,9 +4,9 @@
 #   - ChannelStatus
 # data from an SBF file 
 # -------------------------------
-INPUT_PATH='/media/cesar/Septentrio02/Binary/'
+INPUT_PATH='/media/cesar/Septentrio03/Binary/'
 OUTPUT_PATH='/home/cesar/Desktop/luisd/scripts/Obtencion_posicion/Input_files/Data_set/'
-COMPARE_PATH1='/media/cesar/Septentrio02/ISMR/'
+COMPARE_PATH1='/media/cesar/Septentrio03/ISMR/'
 COMPARE_PATH2='/home/cesar/Desktop/luisd/scripts/Obtencion_posicion/Input_files/Data_NMEA/'
 
 FOLDERS=`diff -q ${COMPARE_PATH1} ${COMPARE_PATH2} | grep Only | grep ${COMPARE_PATH1} | awk '{print $4}'`

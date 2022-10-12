@@ -23,20 +23,23 @@ def read_nmea(input_file_name):
 # Input file: pandas dataframe
 def nmea2lisn(data):
     # Select and clean GGA data: Time + Coordinates 
-    data_gga = data.loc["$GPGGA"] 
+    data_gga = data.loc[["$GPGGA"],:] 
     data_gga2 = data_gga[[1,2,3,4,5,9]] # Choose only the valid information
     data_gga2.columns = ["UTC_time", "LAT", "LAT(unit)", "LON", "LON(unit)", "HEIGHT"]
     data_gga2.reset_index(drop=True, inplace=True)
     #
+    N = 10
+    if len(data_gga2) < N:
+       N = len(data_gga2)
     # -- Remove first columns, which have wrong data
-    vals = data_gga2.iloc[:10,0].values # extract first 10 rows 
+    vals = data_gga2.iloc[:N,0].values # extract first 10 rows 
     indice = [v<=min(vals) for v in vals].index(True)
     rm_rows = list(range(indice))
     data_gga2.drop(index=rm_rows, inplace=True)
     data_gga2.reset_index(drop=True, inplace=True)
     #
     # -- Remove last columns, wich have wrong data
-    vals = data_gga2.iloc[-10:,0].values # extract 10 last rows 
+    vals = data_gga2.iloc[-N:,0].values # extract 10 last rows 
     indice = [vv>=max(vals) for vv in vals].index(True)
     a = list(range(len(vals)-indice-1))
     rm_rows = [len(data_gga2)-(val+1) for val in a]
@@ -45,20 +48,20 @@ def nmea2lisn(data):
     data_gga2.drop_duplicates(subset="UTC_time", keep='last', inplace=True)
 
     # Select and clean ZDA data: Date
-    data_zda = data.loc["$GPZDA"] 
+    data_zda = data.loc[["$GPZDA"],:] 
     data_zda2 = data_zda[[1,2,3,4]]
     data_zda2.columns = ["UTC_time","day","month","year"]
     data_zda2.reset_index(drop=True, inplace=True)
     #
     # --Remove the first columns, with wrong data
-    vals = data_zda2.iloc[:10,0].values
+    vals = data_zda2.iloc[:N,0].values # 10
     indice = [vv<=min(vals) for vv in vals].index(True)
     rm_rows = list(range(indice))
     data_zda2.drop(index=rm_rows, inplace=True)
     data_zda2.reset_index(drop=True, inplace=True)
     #
     # --Remove the last columns, which have wrong data
-    vals = data_zda2.iloc[-10:,0].values
+    vals = data_zda2.iloc[-N:,0].values
     indice = [vv>=max(vals) for vv in vals].index(True)
     a = list(range(len(vals)-indice-1))
     rm_rows = [len(data_zda2)-(val+1) for val in a]
@@ -131,8 +134,8 @@ def nmea2lisn(data):
     df.drop_duplicates(subset="SoD", keep="last", inplace=True)
 
     # --Decimate every hour 
-    df = df.iloc[8::60, :]
-    df.reset_index(drop=True, inplace=True)
+    #df = df.iloc[8::60, :]
+    #df.reset_index(drop=True, inplace=True)
 
     # --Finally, convert to 7 digits float number 
     df["LAT"] = df["LAT"].apply('{:,.7f}'.format)
@@ -173,14 +176,16 @@ def main():
     if len(list_input_files)>0:
         for file_i in list_input_files:
             file_name = file_i[len(input_files_path):] # Get the file's name
-
-            dframe_nmea = read_nmea(file_name)
-            dframe_lisn = nmea2lisn(dframe_nmea)
-            save_csv(file_name, dframe_lisn)
+            try: 
+               dframe_nmea = read_nmea(file_name)
+               dframe_lisn = nmea2lisn(dframe_nmea)
+               save_csv(file_name, dframe_lisn)
     
-            # Move input files to a permanent directory
-            os.rename(file_i, input_files_path_op+file_name)
-
+               # Move input files to a permanent directory
+               os.rename(file_i, input_files_path_op+file_name)
+               print("File " + get_file_name(file_name) + " was obtained succesfully!")
+            except:
+               print("File " + get_file_name(file_name) + " is corrupted!") 
 
 if __name__ == '__main__':
     print("Starting ...")

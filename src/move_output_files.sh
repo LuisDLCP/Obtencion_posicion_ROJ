@@ -9,7 +9,7 @@ FOLDER_DST="${FOLDER_HOME}Main/Output_files/ToUpload/"
 echo 'Compressing and moving pos files'
 
 # Compressing files
-gzip ${FOLDER_SRC}*pos ${FOLDER_SRC2}*pos 
+gzip --force ${FOLDER_SRC}*pos ${FOLDER_SRC2}*pos 
 
 # Moving files 
 mv ${FOLDER_SRC2}*pos.gz ${FOLDER_DST}
